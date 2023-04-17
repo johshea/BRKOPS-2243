@@ -1,0 +1,30 @@
+---
+
+ ssid-2:
+   ssid_name: IOT
+   net_name: CiscoLive
+   enabled: yes
+   auth_mode: psk
+   psk: 12345abc
+   encryption_mode: wpa
+   ip_assignment_mode: Bridge mode
+   number: 2
+   splash_page: none
+   use_vlan_tagging: yes
+   vlan_id: 11
+
+ ssid-5:
+   ssid_name: CiscoLive-2023
+   net_name: CiscoLive
+   enabled: yes
+   auth_mode: psk
+   psk: abc12345
+   encryption_mode: wpa
+   ip_assignment_mode: Bridge mode
+   number: 2
+   splash_page: none
+   use_vlan_tagging: yes
+   vlan_id: 11
+
+
+

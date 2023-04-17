@@ -1,0 +1,255 @@
+---
+
+###common values for all activities
+
+- name: meraki deployment
+  hosts: localhost
+  collections:
+    - cisco.meraki
+    - community.general.cisco_webex
+    - Cisco.Ios
+
+  vars_prompt:
+    - name: auth_key
+      prompt: "Enter your API Key: "
+      private: yes
+
+    - name: network_name
+      prompt: "Enter your Network Name: "
+      private: no
+
+  vars:
+    org_name: "{{ org_info.m_org_name }}"
+    roomid: "{{ webex_teams.roomid }}"
+    webex_api: "{{ webex_teams.webex_api }}"
+    network_name: "{{ netname }}"
+    
+  
+  vars_files:
+    - './vars.yaml'
+    
+
+  tasks:
+
+    - name: include network vars
+      include_vars:
+        file: ./{{ network_name|lower }}/net-vars.yaml
+        name: netvars
+
+    - name: include variables for devices
+      include_vars:
+        file: ./{{ network_name|lower }}/devices.yaml
+        name: devices
+
+    - name: include variables for addresses
+      include_vars: 
+        file: ./{{ network_name|lower }}/mx-vlans.yaml
+        name: addresses
+
+    - name: include variables for network specific ssids
+      include_vars: 
+        file: ./{{ network_name|lower }}/ssid.yaml
+        name: ssids
+
+    - name: include variables for meraki switchports
+      include_vars:
+        file: ./{{ network_name|lower }}/mswitchports.yaml
+        name: mswitchports
+
+    - name: include variables for catalyst switchports
+      include_vars:
+        file: ./{{ network_name|lower }}/cswitchports.yaml
+        name: cswitchports
+
+    - name: include Common clients for all networks
+      include_vars:
+        file: ./net-common/ssid.yaml
+        name: ssid-common
+
+    - name: Configure - Create org network
+      cisco.meraki.meraki_network:
+         auth_key: "{{ auth_key }}"
+         state: present
+         org_name: "{{ org_name }}"
+         name: "{{ item.value.network_name }}"
+         type:
+           - switch
+           - appliance
+           - wireless
+      register: off_network
+      loop: "{{ lookup('dict', devices, wantlist=True) }}"
+      when: "'device-1' in item.key"
+
+    #- debug:
+        #var: off_network
+
+    #- name: Configure - Catalyst Disti Uplink Port
+      #uri:
+          #url: "{{ catalyst.uri }}/data/native/snmp-server"
+          #user: "{{ catalyst.username }}"
+          #password: "{{ catalyst.password }}"
+          #method: PUT
+          #headers:
+            #Content-Type: 'application/yang-data+json'
+            #Accept:
+              #application/yang-data+json,
+              #application/yang-data.errors+json
+          #body_format: json
+          #body: {
+                  #"config": '
+                             #"access-vlan": "{{ item.value.number }}"
+                             #"interface-mode": "{{ item.value.type }}"
+                                      #}
+                 #'}
+          #validate_certs: false
+          #status_code:
+          # - 200
+          # - 204
+          #loop: "{{ lookup('dict', cswitchports, wantlist=True) }}"
+
+    - name: Configure - Add devices to Network
+      cisco.meraki.meraki_device:
+        auth_key: "{{ auth_key }}"
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        state: present
+        serial: "{{ item.value.serial_no }}"
+      register: off_add_dev1
+      loop: "{{ lookup('dict', devices, wantlist=True) }}"
+
+    - name: WebexTeams - Text Message by an Individuals ID
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Devices in Network {{ network_name }} have been created and updated."
+
+    - name: Configure - Update device Information
+      cisco.meraki.meraki_device:
+        auth_key: "{{ auth_key }}"
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        state: present
+        serial: "{{ item.value.serial_no }}"
+        name: " {{ item.value.device_name }}"
+        move_map_marker: no
+      register: off_update_dev1
+      loop: "{{ lookup('dict', devices, wantlist=True) }}"
+
+    - name: Configure - Enable Vlans in MX Networks
+      cisco.meraki.meraki_network:
+        auth_key: "{{ auth_key }}"
+        state: present
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        enable_vlans: "yes"
+        state: present
+
+    - name: WebexTeams - add vlans
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Vlans in Network {{ network_name }} have been Enabled on the Security Appliance."
+
+    - name: Configure - Create a VLAN.
+      cisco.meraki.meraki_mx_vlan:
+        auth_key: "{{ auth_key }}"
+        org_name: "{{ org_name }}"
+        net_name: "{{ item.value.network_name }}"
+        state: present
+        vlan_id: "{{ item.value.vlan_id }}"
+        name: "{{ item.value.name }}"
+        subnet: "{{ item.value.subnet }}"
+        appliance_ip: "{{ item.value.default_gw }}"
+        dhcp_handling: "{{ item.value.dhcp_handling}}"
+        dhcp_lease_time: "{{ item.value.dhcp_lease_time }}"
+        dhcp_boot_options_enabled: "{{ item.value.dhcp_boot_options_enabled }}"
+      delegate_to: localhost
+      register: off_addvlan
+      ignore_errors: yes
+      loop: "{{ lookup('dict', addresses, wantlist=True) }}"
+
+    - name: WebexTeams - add vlans
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Vlans in Network {{ network_name }} have been created."
+
+    - name: Configure - Delete Default SSID
+      cisco.meraki.meraki_mr_ssid:
+        auth_key: "{{ auth_key }}"
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        state: absent
+        name: "{{ network_name }} - wireless WiFi"
+      register: off_delete_default_ssid
+
+    - name: Configure - add ssids
+      cisco.meraki.meraki_mr_ssid:
+        auth_key: "{{ auth_key }}"
+        state: present
+        org_name: "{{ org_name }}"
+        net_name: "{{ item.value.net_name }}"
+        name: "{{ item.value.ssid_name }}"
+        ip_assignment_mode: "{{ item.value.ip_assignment_mode }}"
+        use_vlan_tagging: "{{ item.value.use_vlan_tagging }}"
+        default_vlan_id: "{{ item.value.vlan_id }}"
+        auth_mode: "{{ item.value.auth_mode }}"
+        psk: "{{ item.value.psk }}"
+        encryption_mode: "{{ item.value.encryption_mode }}"
+        enabled: true
+      delegate_to: localhost
+      register: off_ssid
+      ignore_errors: yes
+      loop: "{{ lookup('dict', ssids, wantlist=True) }}"
+
+    - name: WebexTeams - add SSID
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "SSIDs in Network {{ network_name }} have been created."
+
+    - name: insert a pause for API to catchup
+      pause:
+        seconds: 5
+      
+    - name: Configure - add switch vlans
+      cisco.meraki.meraki_ms_switchport:
+        auth_key: "{{ auth_key }}"
+        state: present
+        serial: "{{ item.value.serial }}"
+        number: "{{ item.value.number }}"
+        enabled: "{{ item.value.enabled }}"
+        name: "{{ item.value.name }}"
+        tags: "{{ item.value.tags }}"
+        type: "{{ item.value.type }}"
+        vlan: "{{ item.value.vlan }}"
+      delegate_to: localhost
+      register: off_switchports
+      ignore_errors: yes
+      loop: "{{ lookup('dict', mswitchports, wantlist=True) }}"
+
+
+    - name: WebexTeams - report on switch ports
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Switchports in Network {{ network_name }} have been created."
+
+
+    - name: WebexTeams - network created
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Network {{ network_name }} in Orginization - {{ org_name }} has been created!"

@@ -1,0 +1,29 @@
+---
+ ssid-1:
+   ssid_name: corp
+   net_name: devnet-2022
+   enabled: yes
+   auth_mode: psk
+   psk: abc12345
+   encryption_mode: wpa
+   ip_assignment_mode: Bridge mode
+   number: 1
+   splash_page: none
+   use_vlan_tagging: yes
+   vlan_id: 10
+   
+   
+ ssid-3:
+   ssid_name: guest
+   net_name: devnet-2022
+   enabled: yes
+   auth_mode: psk
+   psk: abc12345
+   encryption_mode: wpa
+   ip_assignment_mode: Bridge mode
+   number: 3
+   splash_page: none
+   use_vlan_tagging: yes
+   vlan_id: 12
+
+

@@ -1,0 +1,36 @@
+---
+  switchport-10:
+    serial: Q2HP-2Y42-HXXD
+    number: 10
+    enabled: yes
+    name: uplink-port
+    tags: uplink
+    type: trunk
+    vlan: 1
+    
+  switchport-1:
+    serial: Q2HP-2Y42-HXXD
+    number: 1
+    enabled: yes
+    name: Uplink-to-catalyst
+    tags: POS
+    type: trunk
+    vlan: 1
+    
+  switchport-2:
+    serial: Q2HP-2Y42-HXXD
+    number: 2
+    enabled: yes
+    name: AP-1
+    tags: AP
+    type: trunk
+    vlan: 1
+    
+  switchport-3:
+    serial: Q2HP-2Y42-HXXD
+    number: 3
+    enabled: yes
+    name: Client-PC-1
+    tags: clientPC
+    type: access
+    vlan: 11
