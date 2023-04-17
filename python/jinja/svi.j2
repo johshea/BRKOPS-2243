@@ -1,0 +1,5 @@
+{% for vint in svi -%}
+        interface  {{ vint.vlan }}
+        description {{ vint.description }}
+        ip address {{ vint.ipaddress }}
+{%endfor%}

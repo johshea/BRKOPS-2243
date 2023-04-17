@@ -1,0 +1,10 @@
+---
+ntp:
+    servers:
+      - 129.6.15.28
+      - 1.1.1.1
+    authentication:
+      hash: md5
+      key:
+        - ciscolive
+        - ciscolive2023

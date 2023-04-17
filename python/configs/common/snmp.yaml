@@ -1,0 +1,4 @@
+---
+snmp:
+  community: "ciscolive2023"
+  access: "RO"

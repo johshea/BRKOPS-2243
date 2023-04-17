@@ -1,0 +1,24 @@
+{%- for interface in interfaces %}
+interface {{ interface.interface }}
+{%- if interface.description != '' %}
+ description << {{ interface.description }} >>
+{%- endif %}
+{%- if interface.mode == 'access' %}
+ no switchport mode trunk
+ no switchport trunk allowed vlan
+ switchport mode access
+ switchport access vlan {{ interface.vlan }}
+{%- elif interface.mode == 'trunk' %}
+ no switchport mode access
+ switchport mode trunk
+ switchport trunk allowed vlan {{ interface.allowdvlans }}
+{%- endif %}
+{%- if interface.portstate == 'false' %}
+ shutdown
+{%- endif %}
+{%- if interface.portfast == 'o' %}
+ spanning-tree portfast
+{%- endif %}
+{%- endfor %}
+exit
+exit
