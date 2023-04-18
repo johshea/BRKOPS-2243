@@ -73,10 +73,11 @@ def callNetmiko(ip, configSet):
     try:
         iosxe_17 = {
             'device_type': 'cisco_ios',
-            "session_log": 'netmiko_session.log',
+            #"session_log": 'netmiko_session.log', #uncomment to get netmiko session logging
             'ip':   ip,
             'username': 'meraki',
             'password': 'meraki',
+            #'secret': '', # uncomment if using an enable secret password
             "read_timeout_override": 5
         }
 
@@ -87,7 +88,7 @@ def callNetmiko(ip, configSet):
     except:
         pass
 
-# Create the parser
+# Create the CL parser
 parser = argparse.ArgumentParser()
 parser.add_argument('--apikey', type=str, required=True, help='Enter your API Key')
 parser.add_argument('--orgname', type=str, required=True, help='Enter Your Orginization name')
@@ -109,7 +110,7 @@ devices = getdevices(orgid)
 
 #create device tag state table for idempotency
 tagState = []
-
+#loop through devices to find device+tag matches to execute against
 for device in devices:
     tagsModified = []
     #open specific device config for device specific tags
