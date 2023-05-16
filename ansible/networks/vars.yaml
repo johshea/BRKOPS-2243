@@ -3,13 +3,15 @@
      m_org_name: DevNet
 
   webex_teams:
-     roomid: Y2lzY29zcGFyazovL3VzL1JPT00vNjY5OWZhZDAtNjFhOC0xMWVjLWFhY2UtZjVmYjdiNzIyYWU5     
-     webex_api: NzcwYWFhYTAtZGIyNi00OTIwLWJiMjUtYjEzMDhjY2E3NjZjYjJmZGUzOGEtMWU2_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f
+     #for the posting of messages to webex teams rooms
+     roomid:     
+     webex_api: 
 
   catalyst:
+    #credentials for Catalyst connections
     uri: 192.168.1.208
-    username: ansible
-    password: ansible
+    username: 
+    password: 
      
   api_uri:
      m_api_url:  https://api.meraki.com/api/v1
