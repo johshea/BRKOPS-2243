@@ -1,6 +1,7 @@
 ---    
+#### Provide Serial # of MS switch where port resides, Entries for multiple switches can be contained as entries
   switchport-1:
-    serial: Q2HP-2Y42-HXXD
+    serial: 
     platform: meraki
     number: 1
     enabled: yes
@@ -10,7 +11,7 @@
     vlan: 1
     
   switchport-2:
-    serial: Q2HP-2Y42-HXXD
+    serial: 
     platform: meraki
     number: 2
     enabled: yes
@@ -20,7 +21,7 @@
     vlan: 1
     
   switchport-3:
-    serial: Q2HP-2Y42-HXXD
+    serial: 
     platform: meraki
     number: 3
     enabled: yes
@@ -30,7 +31,7 @@
     vlan: 20
 
   Switchport-4:
-    serial: Q2HP-2Y42-HXXD
+    serial: 
     platform: meraki
     number: 4
     enabled: yes
