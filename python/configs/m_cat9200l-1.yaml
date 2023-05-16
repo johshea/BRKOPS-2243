@@ -23,7 +23,7 @@ interfaces:
       description: 'access port-9200L_24_Python'
       mode: 'access'
       vlan: '997'
-      portstate: 'false'
+      portstate: 'true'
 
     -
       interface: 'gig1/0/21'
@@ -31,15 +31,15 @@ interfaces:
       description: 'access port-9200L_24_Python'
       mode: 'access'
       vlan: '100'
-      portstate: 'false'
+      portstate: 'true'
 
     -
       interface: 'gig1/0/22'
       rport: 1%2F0%2F22
-      description: 'test'
+      description: 'access port-9200L_24_Python'
       mode: 'access'
       vlan: '100'
-      portstate: 'false'
+      portstate: 'true'
 
     -
       interface: 'gig1/0/23'
@@ -47,7 +47,7 @@ interfaces:
       description: 'access port-9200L_24_Python'
       mode: 'access'
       vlan: '200'
-      portstate: 'false'
+      portstate: 'true'
 
     -
       interface: 'gig1/0/24'
@@ -55,7 +55,7 @@ interfaces:
       description: 'access port-9200L_24_Python'
       mode: 'access'
       vlan: '200'
-      portstate: 'false'
+      portstate: 'true'
 
 svi:
     -
