@@ -1,0 +1,45 @@
+---
+  node-1:
+    network_name: CiscoLive
+    device_name: ciscolive2023-mx-1
+    device_type: MX68
+    platform: meraki
+    serial_no: Q2KY-C67P-D4WB
+    vlan_id: 1
+    ip_address: 10.168.128.1
+    subnet_mask: 255.255.255.0
+    gateway_ip: n/a
+    dns_server1: 208.67.222.222
+    dns_server2: 208.67.220.220
+    enable_vlans: yes
+
+  node-2:
+    network_name: CiscoLive
+    device_name: ciscolive2023-sw-1
+    device_type: MS220-8P
+    platform: meraki
+    serial_no: Q2HP-2Y42-HXXD
+    vlan_id: 1
+    ip_address: 10.168.1.2
+    subnet_mask: 255.255.255.0
+    gateway_ip: 10.168.1.1
+
+  node-3:
+    network_name: CiscoLive
+    device_name: ciscolive2023-mr-1
+    device_type: 9164i-M
+    platform: meraki
+    serial_no: Q5AC-SW3L-QPCN
+    vlan_id: 1
+    ip_address: 10.168.1.3
+    subnet_mask: 255.255.255.0
+    gateway_ip: 10.168.1.1
+
+  #node-4:
+    #network_name: CiscoLive
+    #device_name: ciscolive2023-cat92000l
+    #device_type: cat9200l
+    #platform: catalyst
+    #serial_no: Q2ZZ-T6TV-8ZMP
+
+

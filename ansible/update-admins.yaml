@@ -1,0 +1,65 @@
+---
+
+###common values for all activities
+
+- name: meraki deployment
+  hosts: localhost
+  collections:
+    - cisco.meraki
+    - community.general.cisco_webex
+  
+  vars_prompt:
+    - name: auth_key
+      prompt: "Enter your API Key: "
+      private: yes
+
+  vars:
+    org_name: "{{ org_info.m_org_name }}"
+    auth_key: "{{ api_uri.m_auth_key }}"
+    roomid: "{{ webex_teams.roomid }}"
+    webex_api: "{{ webex_teams.webex_api }}"
+    
+  vars_files:
+    - './vars.yaml'
+    
+  tasks:
+    - name: include admin vars
+      include_vars:
+        file: ./org/admins.yaml
+        name: admins
+
+
+    - name: WebexTeams - Playbook Open
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Starting update-admins Playbook tasks!"
+
+    - name: Create a new network administrator
+      cisco.meraki.meraki_admin:
+        auth_key: "{{ auth_key }}"
+        org_name: "{{ org_name }}"
+        state: present
+        name: "{{ item.value.adminname }}"
+        orgAccess: read-only
+        email: "{{ item.value.adminemail }}"
+      delegate_to: localhost
+      ignore_errors: yes
+      register: mod_admin
+      loop: "{{ lookup('dict', admins, wantlist=True) }}"
+
+    #- debug:
+        #var: admin_user
+
+    - name: WebexTeams - admins created
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Admin Account {{ item.data.name }} in Organization - {{ org_name }} has been created!"
+      loop: "{{ mod_admin.results }}"
+
+   

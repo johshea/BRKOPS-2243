@@ -1,0 +1,46 @@
+---
+    - name: add network specific ssids
+      cisco.meraki.meraki_mr_ssid:
+        auth_key: "{{ auth_key }}"
+        state: present
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        name: "{{ item.value.ssid_name }}"
+        ip_assignment_mode: "{{ item.value.ip_assignment_mode }}"
+        use_vlan_tagging: "{{ item.value.use_vlan_tagging }}"
+        default_vlan_id: "{{ item.value.vlan_id }}"
+        auth_mode: "{{ item.value.auth_mode }}"
+        psk: "{{ item.value.psk }}"
+        encryption_mode: "{{ item.value.encryption_mode }}"
+        enabled: true
+      delegate_to: localhost
+      register: add_ssid
+      ignore_errors: yes
+      loop: "{{ lookup('dict', ssids, wantlist=True) }}"
+      
+
+    - name: add ssids common to all networks
+      cisco.meraki.meraki_mr_ssid:
+        auth_key: "{{ auth_key }}"
+        state: present
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        name: "{{ item.value.ssid_name }}"
+        ip_assignment_mode: "{{ item.value.ip_assignment_mode }}"
+        use_vlan_tagging: "{{ item.value.use_vlan_tagging }}"
+        default_vlan_id: "{{ item.value.vlan_id }}"
+        auth_mode: "{{ item.value.auth_mode }}"
+        psk: "{{ item.value.psk }}"
+        encryption_mode: "{{ item.value.encryption_mode }}"
+        enabled: true
+      delegate_to: localhost
+      register: add_ssid_common
+      ignore_errors: yes
+      loop: "{{ lookup('dict', ssid_common, wantlist=True) }}"
+
+
+
+
+
+
+        

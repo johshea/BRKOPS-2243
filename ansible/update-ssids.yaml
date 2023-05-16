@@ -1,0 +1,64 @@
+---
+
+###common values for all activities
+
+
+- name: meraki deployment
+  hosts: localhost
+  collections:
+    - cisco.meraki
+    - community.general.cisco_webex
+  
+  vars_prompt:
+    - name: auth_key
+      prompt: "Enter your API Key: "
+      private: yes
+
+    - name: network_name
+      prompt: "Enter your Network Name: "
+      private: no
+
+  vars:
+    org_name: "{{ org_info.m_org_name }}"
+    auth_key: "{{ api_uri.m_auth_key }}"
+    roomid: "{{ webex_teams.roomid }}"
+    webex_api: "{{ webex_teams.webex_api }}"
+    
+  vars_files:
+    - './vars.yaml'
+
+  tasks:
+
+    - name: include variables for network specific ssids
+      include_vars: 
+        file: ./networks/{{ network_name|lower }}/ssid.yaml
+        name: ssids
+
+    - name: include Common elements for all networks
+      include_vars:
+        file: ./networks/net-common/ssid.yaml
+        name: ssid_common
+    
+        # since we need multiple tasks we will include them in the same iterator see ./tasks/ssids-tasks.yaml.   
+    - name: Configure - Modify network ssids
+      include_tasks: ./tasks/ssids-tasks.yaml
+      
+
+    #- debug:
+        #var: add_ssid
+
+
+    - name: WebexTeams - add ssids
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "SSID ID: {{ item.data.number }} with Name: {{ item.data.name }}  in Network {{ network_name }} has been created."
+      loop: "{{ add_ssid.results + add_ssid_common.results }}"
+
+
+
+
+
+        

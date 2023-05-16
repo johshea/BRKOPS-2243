@@ -1,0 +1,16 @@
+---  
+  admin-1:
+     adminname: test1
+     adminemail: test1dev@test.com
+  
+  admin-2:
+     adminname: test2
+     adminemail: test2dev@test.com
+
+  admin-3:
+     adminname: test3
+     adminemail: test3dev@test.com
+     org_access: read-only
+
+
+

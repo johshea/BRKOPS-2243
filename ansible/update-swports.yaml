@@ -1,0 +1,79 @@
+---
+
+###common values for all activities
+
+- name: meraki deployment
+  hosts: localhost
+  collections:
+    - cisco.meraki
+    - community.general.cisco_webex
+  
+  vars_prompt:
+    - name: auth_key
+      prompt: "Enter your API Key: "
+      private: yes
+
+    - name: network_name
+      prompt: "Enter the Network Name: "
+      private: no
+
+  vars:
+    org_name: "{{ org_info.m_org_name }}"
+    roomid: "{{ webex_teams.roomid }}"
+    webex_api: "{{ webex_teams.webex_api }}"
+    cat_user: "{{ catalyst.username }}"
+    cat_pass: "{{ catalyst.password }}"
+
+    
+    
+  vars_files:
+    - './vars.yaml'
+    
+  tasks:
+
+    - name: include variables for Meraki switchports
+      include_vars:
+        file: ./networks/{{ network_name|lower }}/m_swports.yaml
+        name: m_swports
+
+    - name: include variables for Catalyst switchports
+      include_vars:
+        file: ./networks/{{ network_name|lower }}/c_swports.yaml
+        name: c_swports
+
+
+    - name: Configure - Modify Meraki switch ports
+      cisco.meraki.meraki_ms_switchport:
+        auth_key: "{{ auth_key }}"
+        state: present
+        serial: "{{ item.value.serial }}"
+        number: "{{ item.value.number }}"
+        enabled: "{{ item.value.enabled }}"
+        name: "{{ item.value.name }}"
+        tags: "{{ item.value.tags }}"
+        type: "{{ item.value.type }}"
+        vlan: "{{ item.value.vlan }}"
+      delegate_to: localhost
+      register: m_swports
+      ignore_errors: true
+      loop: "{{ lookup('dict', m_swports, wantlist=True) }}"
+ 
+
+    # since we need multiple tasks we will include them in the same iterator see ./tasks/c_swports-tasks.yaml.   
+    - name: Configure - Modify catalyst switch ports
+      include_tasks: ./tasks/c_swports-tasks.yaml
+      loop: "{{ lookup('dict', c_swports, wantlist=True) }}"
+
+        
+    - name: WebexTeams - Switch Ports Configured
+      community.general.cisco_webex:
+        recipient_type: roomId
+        recipient_id: "{{ roomid }}"
+        msg_type: text
+        personal_token: "{{ webex_api }}"
+        msg: "Switchports in Network {{ network_name }} have been updated."
+
+
+
+
+        

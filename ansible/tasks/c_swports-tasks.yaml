@@ -1,0 +1,50 @@
+---
+ - name: Configure - Modify catalyst switch ports - vlans and mode
+   uri:
+     url: "https://{{ catalyst.uri }}/restconf/data/openconfig-interfaces:interfaces/interface=GigabitEthernet{{ item.value.rport }}/ethernet/switched-vlan/config"
+     url_username: "{{ cat_user }}"
+     url_password: "{{ cat_pass }}"
+     force_basic_auth: true
+     force: true
+     validate_certs: false
+     method: PUT
+     headers: 
+           Content-type: 'application/yang-data+json'
+           Accept:   
+                   application/yang-data+json, 
+                   application/yang-data.errors+json
+     body_format: json
+     body: {
+               "config": {
+                           "access-vlan": "{{ item.value.vlan }}",
+                           "interface-mode": "{{ item.value.type|upper }}"
+                       }
+                       }
+     return_content: true
+     status_code: 201, 204, 208
+   ignore_errors: true
+
+ - name: Configure - Modify catalyst switch ports description and port state
+   uri:
+     url: "https://{{ catalyst.uri }}/restconf/data/openconfig-interfaces:interfaces/interface=GigabitEthernet{{ item.value.rport }}/config"
+     url_username: "{{ cat_user }}"
+     url_password: "{{ cat_pass }}"
+     force_basic_auth: true
+     force: true
+     validate_certs: false
+     method: PATCH
+     headers: 
+           Content-type: 'application/yang-data+json'
+           Accept:   
+                   application/yang-data+json, 
+                   application/yang-data.errors+json
+     body_format: json
+     body: {
+               "config": {
+                           "description": "{{ item.value.name }}",
+                           "enabled": "{{ item.value.enabled }}"
+                       }
+                      }
+     return_content: true
+     status_code: 201, 204, 208
+   ignore_errors: true
