@@ -1,0 +1,6 @@
+{%- if interface.duplex != 'auto' %}
+ duplex {{ interface.duplex }}
+{%- endif %}
+{%- if interface.speed != 'auto' %}
+ speed {{ interface.speed }}
+{%- endif %}

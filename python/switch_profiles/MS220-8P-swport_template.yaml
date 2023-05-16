@@ -1,0 +1,65 @@
+---
+  interfaces:
+    -
+      interface: '1'
+      description: 'uplink Trunk-MS-8-swport_template'
+      mode: 'trunk'
+      vlan: '1'
+      portstate: 'true'
+    -
+      interface: '2'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'true'
+    -
+      interface: '3'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'true'
+
+    -
+      interface: '4'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'true'
+
+    -
+      interface: '5'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'true'
+
+    -
+      interface: '6'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'true'
+
+    - interface: '7'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'false'
+
+    - interface: '8'
+      description: 'client MS-8-swport_template'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'false'
+
+    - interface: '9'
+      description: 'trunk MS-8-swport_template'
+      mode: 'trunk'
+      vlan: '1'
+      portstate: 'true'
+
+    - interface: '10'
+      description: 'trunk MS-8-swport_template'
+      mode: 'trunk'
+      vlan: '1'
+      portstate: 'false'

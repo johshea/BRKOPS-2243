@@ -1,0 +1,40 @@
+---
+host:
+  -
+    name: 'ms220-1'
+
+  interfaces:
+    -
+      interface: 'client-6'
+      description: 'client'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'true'
+
+    - interface: '7'
+      description: 'client'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'false'
+
+    - interface: '8'
+      description: 'client'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'false'
+
+    - interface: '9'
+      description: 'trunk'
+      mode: 'trunk'
+      vlan: '1'
+      portstate: 'true'
+
+    - interface: '10'
+      description: 'trunk-AP'
+      mode: 'trunk'
+      vlan: '1'
+      portstate: 'true'
+
+  stp:
+    mode: 'rstp'
+    priority: ''

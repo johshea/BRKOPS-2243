@@ -1,0 +1,8 @@
+{% for vint in svi %}
+        {% set address = vint.address %}
+        {% set netmask = vint.netmask %}
+        {% set ipaddress = address ~ " " ~ netmask %}
+        interface  {{ vint.vlan }}
+        description {{ vint.description }}
+        ip address {{ ipaddress }}
+{%endfor%}

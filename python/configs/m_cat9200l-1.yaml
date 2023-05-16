@@ -1,0 +1,112 @@
+---
+host:
+  -
+    name: "m_cat9200l-1"
+    stpmode: "rstp"
+
+vlans:
+   -
+     vlan: '100'
+     description: 'CiscoLive-vlan100'
+
+   -
+     vlan: '200'
+     description: 'CiscoLive-vlan200'
+
+
+interfaces:
+#add interfaces with configs different than those defined in the template
+# rport is a urlencoded refrence of the actual port
+    -
+      interface: 'gig1/0/20'
+      rport: 1%2F0%2F20
+      description: 'access port-9200L_24_Python'
+      mode: 'access'
+      vlan: '997'
+      portstate: 'false'
+
+    -
+      interface: 'gig1/0/21'
+      rport: 1%2F0%2F21
+      description: 'access port-9200L_24_Python'
+      mode: 'access'
+      vlan: '100'
+      portstate: 'false'
+
+    -
+      interface: 'gig1/0/22'
+      rport: 1%2F0%2F22
+      description: 'test'
+      mode: 'access'
+      vlan: '100'
+      portstate: 'false'
+
+    -
+      interface: 'gig1/0/23'
+      rport: '1%2F0%2F23'
+      description: 'access port-9200L_24_Python'
+      mode: 'access'
+      vlan: '200'
+      portstate: 'false'
+
+    -
+      interface: 'gig1/0/24'
+      rport: '1%2F0%2F24'
+      description: 'access port-9200L_24_Python'
+      mode: 'access'
+      vlan: '200'
+      portstate: 'false'
+
+svi:
+    -
+      vlan: 'vlan100'
+      description: 'SVI for Vlan100'
+      address: '192.168.100.1'
+      netmask:    '255.255.255.0'
+
+    -
+      vlan: 'vlan200'
+      description: 'SVI for Vlan200'
+      address: '192.168.200.1'
+      netmask: '255.255.255.0'
+
+
+loopbacks:
+  -
+    int: "loopback0"
+    description: "interface loopback 0 - Python RESTCONF"
+    address: '192.168.2.1'
+    netmask: '255.255.255.255'
+
+  -
+    int: "loopback1"
+    description: "interface loopback 1 - Python RESTCONF"
+    address: '172.16.1.1'
+    netmask: '255.255.255.255'
+
+bgp:
+  bgpasn: "65201"
+  bgpNetworks:
+    - ip: "10.0.0.2"
+      remote_as: "65200"
+
+ospf:
+  processid: "1.1.1.1"
+  routerid: "192.168.1.1"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

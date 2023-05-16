@@ -1,0 +1,19 @@
+---
+rules:
+  -
+    policy: deny
+    type: blacklistedCountries
+    value: [ "AX", "CA" ]
+  -
+    policy: deny
+    type: host
+    value: google.com
+
+  - policy: deny
+    type: whitelistedCountries"
+    value: [ "US" ]
+
+  -
+    policy: deny
+    type: iprange
+    value: 10.11.12.00/24

@@ -1,0 +1,8 @@
+{% for loopback in loopbacks %}
+        {% set address = loopback.address %}
+        {% set netmask = loopback.netmask %}
+        {% set ipaddress = address ~ " " ~ netmask %}
+        interface  {{ loopback.int }}
+        description {{ loopback.description }}
+        ip address {{ ipaddress }}
+{% endfor %}
