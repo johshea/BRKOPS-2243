@@ -5,12 +5,10 @@
 import subprocess, sys, os, yaml
 import argparse
 import pkg_resources
-from dotenv import load_dotenv
 
-load_dotenv()
 
 #Auto Install Required Packages if missing
-required  = {'jinja2', 'six', 'netmiko', 'meraki'}
+required  = {'jinja2', 'six', 'netmiko', 'meraki', 'python-dotenv'}
 installed = {pkg.key for pkg in pkg_resources.working_set}
 missing   = required - installed
 
@@ -19,7 +17,10 @@ if missing:
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', *missing])
 
 import meraki, jinja2
+from dotenv import load_dotenv
 from netmiko import ConnectHandler
+
+load_dotenv()
 
 #constants (global Vars)
 #Jinja config template mapping
@@ -302,7 +303,7 @@ for device in devices:
         #only applie to catalyst
         with open("configs/" + device['name'] + ".yaml") as file:
             interfacesData_yaml = file.read()
-        interfacesConfig = yaml.safe_load(loopbacksData_yaml)
+        interfacesConfig = yaml.safe_load(interfacesData_yaml)
 
         if 'C9' in device['model']:
             response = updCatInterfaces(device['lanIp'], interfacesConfig)
