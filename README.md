@@ -1,6 +1,6 @@
 # Cisco Live 2023 Las Vegas BRKOPS-2243 #
 
-###### Ansible ######
+### Ansible ###
 <p>Ansible installation:
 With Python PIP - ”pip install ansible-core” from the command line, verify with ansible –version
 For more information: https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
@@ -16,7 +16,7 @@ To run your first playbook you must first define your information in the various
 to execute the playbook: ansible-playbook deploy-net.yaml or ansible-playbook deploy-net.yaml --tags "comma seperated tag values"
   *******************************************************************************************************************************</p>
                                                                                                            
-###### Python ######
+### Python ###
 A script that leverages tags associated with devices in Meraki Dashboard to deploy configuration (where supported) to Meraki and Monitored Catalyst devices.
 <p>Requirments:
 Python 3.8 or higher
