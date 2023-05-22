@@ -1,6 +1,6 @@
 ##############################################################################################
-#Usage python deploy-netmiko.py --apikey <key> -- orgname <org name> --mode <svi, ports, all>
-#usage python deploy-netmiko.py -h or --help <displays parameter help options>
+#Usage python deploy-netmiko.py  -- orgname <org name>
+#usage python deploy-netmiko.py --h or --help <displays parameter help options>
 ##############################################################################################
 import subprocess, sys, os, yaml
 import argparse
