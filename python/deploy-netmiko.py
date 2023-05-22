@@ -49,8 +49,7 @@ def getdevices(orgid):
     #Meraki Interaction
     #to create new functions add the tag values below
     devices = dashboard.organizations.getOrganizationDevices(
-        orgid, tags=['9200L_24_template', '9200L_48_template', '9300_48_template', '93000_24_template', 'snmp', 'stp',
-                     'static', 'ospf', 'base_profile', 'loopbacks', 'vlans'], total_pages='all'
+        orgid, tags=[ 'snmp', 'stp', 'static', 'ospf', 'base_profile', 'loopbacks', 'vlans'], total_pages='all'
     )
     return(devices)
 
