@@ -5,28 +5,28 @@ host:
 interfaces:
   -
     interface: '6'
-    description: 'client'
+    description: 'client - Added by Python'
     mode: 'access'
     vlan: '997'
     portstate: 'true'
 
   -
     interface: '7'
-    description: 'client'
+    description: 'client - Added by Python'
     mode: 'access'
     vlan: '997'
     portstate: 'false'
 
   -
     interface: '8'
-    description: 'client'
+    description: 'client - Added by Python'
     mode: 'access'
     vlan: '997'
     portstate: 'false'
 
   -
     interface: '9'
-    description: 'trunk'
+    description: 'client - Added by Python'
     mode: 'trunk'
     vlan: '1'
     portstate: 'true'
