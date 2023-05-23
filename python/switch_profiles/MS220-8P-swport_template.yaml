@@ -6,12 +6,14 @@
       mode: 'trunk'
       vlan: '1'
       portstate: 'true'
+
     -
       interface: '2'
       description: 'client MS-8-swport_template'
       mode: 'access'
       vlan: '997'
       portstate: 'true'
+
     -
       interface: '3'
       description: 'client MS-8-swport_template'

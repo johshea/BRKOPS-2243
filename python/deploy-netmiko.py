@@ -49,7 +49,7 @@ def getdevices(orgid):
     #Meraki Interaction
     #to create new functions add the tag values below
     devices = dashboard.organizations.getOrganizationDevices(
-        orgid, tags=[ 'snmp', 'stp', 'static', 'ospf', 'base_profile', 'loopbacks', 'vlans'], total_pages='all'
+        orgid, tags=[ 'snmp', 'stp', 'static', 'ospf', 'base_profile', 'loopbacks', 'vlans', 'interfaces'], total_pages='all'
     )
     return(devices)
 
@@ -106,11 +106,10 @@ def updMerakiInterfaces(interfacesConfig):
     #Meraki Interaction
     # if you are here the switch must be Meraki
     print('/n')
-    print(f'Applying base switch port profile to Meraki {device["name"]}')
-    print('When complete the template tag will be removed from the device.')
+    print(f'Applying switchport config to Meraki {device["name"]}')
     print('###############################################################')
     for int in interfacesConfig['interfaces']:
-        response = dashboard.switch.updateDeviceSwitchPort(
+        intResponse = dashboard.switch.updateDeviceSwitchPort(
             device['serial'], int['interface'],
             name=int['description'],
             enabled=int['portstate'],
@@ -122,7 +121,8 @@ def updMerakiInterfaces(interfacesConfig):
             stpGuard='disabled',
             linkNegotiation='Auto negotiate',
             udld='Alert only', )
-        return response
+        print (intResponse)
+        return intResponse
 
 def updCatNTP(ip, ntpConfig):
     #Catalyst Interaction
@@ -181,6 +181,16 @@ def updCatSnmp(ip, snmpConfig):
 
     print('###############################################################')
 
+    return snmpResponse
+def updMerakiSNMP(network_id, snmpConfig):
+    print(f'Applying device SNMP to Meraki {device["name"]}')
+    print('###############################################################')
+    for community in snmpConfig['communities']:
+        print(community)
+        snmpResponse = dashboard.networks.updateNetworkSnmp(
+            network_id,
+            access='community', communityString=community
+        )
     return snmpResponse
 
 def updCatVlans(ip, vlansConfig):
@@ -262,7 +272,11 @@ for device in devices:
             snmpData_yaml = file.read()
         snmpConfig = yaml.safe_load(snmpData_yaml)
 
-        response = updCatSnmp(device['lanIp'], snmpConfig)
+        if 'C9' in device['model']:
+            response = updCatSnmp(device['lanIp'], snmpConfig)
+
+        else:
+            response = updMerakiSNMP(device['networkId'], snmpConfig)
 
     if 'ntp' in device['tags']:
         #only applie to catalyst
