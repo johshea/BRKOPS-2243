@@ -34,9 +34,8 @@ Meraki Dashboard Tags that will trigger configuration are: <br>
   3. loopbacks (Catalyst only)
   4. static (Catalyst only)
   5. interfaces (Meraki and Catalyst)
-  6. snmp (Catalyst only)
+  6. snmp (Meraki and Catalyst)
   7. ntp (Catalyst only)
-
 
 Folder Hirearchy:
 1. Configs <br>
