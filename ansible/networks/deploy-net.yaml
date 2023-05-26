@@ -36,36 +36,58 @@
       include_vars:
         file: ./{{ network_name|lower }}/net-vars.yaml
         name: netvars
+      tags:
+        - meraki
+        - nodesmxaddresses
 
     - name: include variables for devices
       include_vars:
         file: ./{{ network_name|lower }}/meraki_nodes.yaml
         name: meraki_nodes
+      tags:
+        - meraki
+        - nodes
 
-    - name: include variables for addresses
+    - name: include variables for MX addresses
       include_vars: 
         file: ./{{ network_name|lower }}/mx-vlans.yaml
-        name: addresses
+        name: mxaddresses
+      tags:
+        - meraki
+        - mxaddresses
+        - nodes
 
     - name: include variables for network specific ssids
       include_vars: 
         file: ./{{ network_name|lower }}/ssid.yaml
         name: ssids
+      tags:
+        - meraki
+        - ssids
 
     - name: include variables for meraki switchports
       include_vars:
         file: ./{{ network_name|lower }}/m_swports.yaml
         name: m_swports
+      tags:
+        - meraki
+        - m_swports
 
     - name: include variables for catalyst switchports
       include_vars:
         file: ./{{ network_name|lower }}/c_swports.yaml
         name: c_swports
+      tags:
+        - catalyst
+        - c_swports
 
     - name: include Common elements for all networks
       include_vars:
         file: ./net-common/ssid.yaml
         name: ssid_common
+      tags:
+        - meraki
+        - ssids
 
     - name: Configure - Create network if it does not Exist
       cisco.meraki.meraki_network:
@@ -80,6 +102,9 @@
       register: add_network
       loop: "{{ lookup('dict', meraki_nodes, wantlist=True) }}"
       when: "'node-1' in item.key"
+      tags:
+        - meraki
+        - nodes
 
     #- debug:
         #var: add_network
@@ -92,8 +117,12 @@
         state: present
         serial: "{{ item.value.serial_no }}"
       register: add_node
+      ignore_errors: yes
       loop: "{{ lookup('dict', meraki_nodes, wantlist=True) }}"
       when: item.value.platform != "catalyst"
+      tags:
+        - meraki
+        - nodes
 
     #- debug:
         #var: add_node
@@ -105,10 +134,11 @@
         net_name: "{{ network_name }}"
         state: present
         serial: "{{ item.value.serial_no }}"
-        name: " {{ item.value.device_name }}"
+        name: "{{ item.value.device_name }}"
         move_map_marker: no
       register: update_node
       loop: "{{ lookup('dict', meraki_nodes, wantlist=True) }}"
+      ignore_errors: yes
       when: item.value.platform != "catalyst"
 
 
@@ -119,16 +149,22 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: "Device Name {{ item.value.device_name }} with Serial {{ item.value.serial_no }} has been added to Network {{ network_name }}"
+      ignore_errors: yes
       loop: "{{ lookup('dict', meraki_nodes, wantlist=True) }}"
 
 
     - name: Configure - Configure - Enable Vlans in MX Networks
       cisco.meraki.meraki_network:
         auth_key: "{{ auth_key }}"
-        state: present
         org_name: "{{ org_name }}"
         net_name: "{{ network_name }}"
+        enable_vlans: true
         state: present
+      ignore_errors: yes
+      tags:
+        - meraki
+        - addresses
+        - nodes
 
 
     - name: WebexTeams - add vlans
@@ -138,6 +174,7 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: " Vlan Support on the Security Appliance in Network {{ network_name }} has been enabled ."
+      ignore_errors: yes
 
     - name: Configure - create mx vlans
       cisco.meraki.meraki_mx_vlan:
@@ -155,8 +192,11 @@
       delegate_to: localhost
       register: add_vlan
       ignore_errors: yes
-      loop: "{{ lookup('dict', addresses, wantlist=True) }}"
-
+      loop: "{{ lookup('dict', mxaddresses, wantlist=True) }}"
+      tags:
+        - meraki
+        - nodes
+        - mxaddresses
 
     #- debug:
         #var: add_vlan
@@ -169,8 +209,46 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: "VlanID {{ item.data.id }} and IP Subnet {{ item.data.subnet }} have been added to the MX in Network {{ network_name }}."
+      ignore_errors: yes
       loop: "{{ add_vlan.results }}"
 
+    - name: Set AutoVPN Hub
+      meraki_site_to_site_vpn:
+        auth_key: "{{ auth_key }}"
+        state: present
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        mode: "{{ item.value.vpn_mode }}"
+      delegate_to: localhost
+      register: set_hub
+      loop: "{{ lookup('dict', meraki_nodes, wantlist=True) }}"
+      when: 
+        - item.value.device_type == "MX"
+        - item.value.vpn_mode == "hub"
+      tags:
+        - meraki
+        - hub
+
+    - name: Set AutoVPN spoke
+      meraki_site_to_site_vpn:
+        auth_key: "{{ auth_key }}"
+        state: present
+        org_name: "{{ org_name }}"
+        net_name: "{{ network_name }}"
+        mode: "{{ item.value.vpn_mode }}"
+        hubs:
+           - hub_id: "{{ item.value.hub_net }}"
+             use_default_route: "{{ item.value.hub_default }}"
+        
+      delegate_to: localhost
+      register: set_spoke
+      loop: "{{ lookup('dict', meraki_nodes, wantlist=True) }}"
+      when: 
+        - item.value.device_type == "mx"
+        - item.value.vpn_mode == "spoke"
+      tags:
+        - meraki
+        - spoke
 
     - name: Configure - Delete Default SSID
       cisco.meraki.meraki_mr_ssid:
@@ -180,11 +258,16 @@
         state: absent
         name: "{{ network_name }} - wireless WiFi"
       register: delete_default_ssid
+      ignore_errors: yes
 
 
         # since we need multiple tasks we will include them in the same iterator see ./tasks/ssids-tasks.yaml.   
     - name: Configure - Modify network ssids
       include_tasks: ../tasks/ssids-tasks.yaml
+      ignore_errors: yes
+      tags:
+        - meraki
+        - ssids
       
 
     #- debug:
@@ -198,9 +281,11 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: "SSID ID: {{ item.data.number }} with Name: {{ item.data.name }}  in Network {{ network_name }} has been created."
+      ignore_errors: yes
       loop: "{{ add_ssid.results + add_ssid_common.results }}"
-
-
+      tags:
+        - meraki
+        - ssids
 
     - name: insert a pause for API to catchup
       pause:
@@ -223,7 +308,9 @@
       ignore_errors: yes
       loop: "{{ lookup('dict', m_swports, wantlist=True) }}"
       when: item.value.platform != "catalyst"
-
+      tags:
+        - meraki
+        - m_swports
 
     #- debug:
         #var: add_ms_swports
@@ -236,13 +323,20 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: "MS swithchport {{ item.data.port_id }} with Description {{ item.data.name }} in Network {{ network_name }} has been created."
+      ignore_errors: yes
       loop: "{{ add_ms_swports.results }}"
-
+      tags:
+        - meraki
+        - m_swports
 
     # since we need multiple tasks we will include them in the same iterator see ./tasks/c_swports-tasks.yaml.   
     - name: Configure - Modify catalyst switch ports
       include_tasks: ../tasks/c_swports-tasks.yaml
       loop: "{{ lookup('dict', c_swports, wantlist=True) }}"
+      ignore_errors: yes
+      tags:
+        - catalyst
+        - c_swports
 
     #- debug:
         #var: c_swports
@@ -255,8 +349,11 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: "Catalyst {{ item.value.hostname }}  Switchport {{ item.value.number }} in Network {{ network_name }} have been Configured."
+      ignore_errors: yes
       loop: "{{ lookup('dict', c_swports, wantlist=True) }}"
-
+      tags:
+        - catalyst
+        - c_swports
 
     - name: WebexTeams - network created
       community.general.cisco_webex:
@@ -265,3 +362,4 @@
         msg_type: text
         personal_token: "{{ webex_api }}"
         msg: "Network {{ network_name }} in Orginization - {{ org_name }} has been created!"
+      ignore_errors: yes
