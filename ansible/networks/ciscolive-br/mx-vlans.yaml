@@ -1,0 +1,45 @@
+---
+ subnet-1:
+    network_name: CiscoLive-BR
+    name: CL-Management
+    vlan_id: 1
+    subnet: 10.0.2.0/24
+    default_gw: 10.0.2.1
+    dhcp_handling: server
+    dhcp_lease_time: 1 hour
+    dhcp_boot_options_enabled: false
+    subnet_invpn: true
+
+ subnet-2:
+    network_name: CiscoLive-BR
+    name: CL-Corp
+    vlan_id: 10
+    subnet: 10.10.2.0/24
+    default_gw: 10.10.2.1
+    dhcp_handling: server
+    dhcp_lease_time: 1 hour
+    dhcp_boot_options_enabled: false
+    subnet_invpn: true
+   
+ subnet-3:
+    network_name: CiscoLive-BR
+    name: CL-User
+    vlan_id: 20
+    subnet: 10.20.2.0/24
+    default_gw: 10.20.2.1
+    dhcp_handling: server
+    dhcp_lease_time: 1 hour
+    dhcp_boot_options_enabled: false
+    subnet_invpn: true
+
+ subnet-4:
+    network_name: CiscoLive-BR
+    name: CL-IOT
+    vlan_id: 30
+    subnet: 10.30.2.0/24
+    default_gw: 10.30.2.1
+    dhcp_handling: server
+    dhcp_lease_time: 1 hour
+    dhcp_boot_options_enabled: false
+    subnet_invpn: true
+
