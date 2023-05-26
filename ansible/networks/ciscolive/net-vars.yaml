@@ -1,6 +1,6 @@
 ---  
   site_info:
-     m_org_name: DevNet
-     network_name: CiscoLive
+     m_org_name: #### orgname ####
+     network_name: #### network name ####
 
 
