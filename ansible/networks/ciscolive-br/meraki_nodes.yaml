@@ -4,7 +4,7 @@
     device_name: ciscolive2023-z4c-1
     device_type: mx
     platform: meraki
-    serial_no: Q3FE-L448-N49K
+    serial_no: xxxx-xxxx-xxxx # enter the device serial #
     vlan_id: 1
     ip_address: 10.169.128.1
     subnet_mask: 255.255.255.0
@@ -14,7 +14,7 @@
     dns_server2: 208.67.220.220
     enable_vlans: yes
     vpn_mode: spoke
-    hub_net: L_770678486233778274
+    hub_net: XXXXXXXXX #enter the network id for your hub ex L-1234
     hub_default: false
     subnet_invpn: true
 
