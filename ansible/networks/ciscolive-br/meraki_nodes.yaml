@@ -6,10 +6,6 @@
     platform: meraki
     serial_no: xxxx-xxxx-xxxx # enter the device serial #
     vlan_id: 1
-    ip_address: 10.169.128.1
-    subnet_mask: 255.255.255.0
-    cidr: 10.169.128.0/24
-    gateway_ip: n/a
     dns_server1: 208.67.222.222
     dns_server2: 208.67.220.220
     enable_vlans: yes
