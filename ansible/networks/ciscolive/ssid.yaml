@@ -1,7 +1,7 @@
 ---
 
  ssid-2:
-   ssid_name: IOT
+   ssid_name: IOT-CL2023
    net_name: CiscoLive
    enabled: yes
    auth_mode: psk
