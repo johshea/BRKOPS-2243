@@ -19,7 +19,7 @@
     number: 1/0/4
     rport: 1%2F0%2F4 #rest urlencoded format for port#
     enabled: true
-    name: uplink-port to MX Spare
+    name: uplink-port to MX Warm Spare
     tags: uplink
     type: access
     vlan: 1
