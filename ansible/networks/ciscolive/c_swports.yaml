@@ -17,7 +17,7 @@
     platform: catalyst
     hostname: m_cat9200l-1
     number: 1/0/4
-    rport: 1%2F0%2F3 #rest urlencoded format for port#
+    rport: 1%2F0%2F4 #rest urlencoded format for port#
     enabled: true
     name: uplink-port to MX Spare
     tags: uplink
